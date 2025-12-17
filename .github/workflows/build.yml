@@ -1,0 +1,95 @@
+name: Build and Release
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - os: windows-latest
+            zip_name: SNAUTO-Windows
+            executable_path: dist/Hitman_Racetime_Automation.exe
+          - os: ubuntu-latest
+            zip_name: SNAUTO-Linux
+            executable_path: dist/Hitman_Racetime_Automation
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.13
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Build Windows
+        if: matrix.os == 'windows-latest'
+        run: |
+          pyinstaller --name "Hitman_Racetime_Automation" --onefile --windowed --add-data "config.ini;." Hitman_Racetime_Automation.py
+
+      - name: Build Linux
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          pyinstaller --name "Hitman_Racetime_Automation" --onefile --windowed --add-data "config.ini:." Hitman_Racetime_Automation.py
+
+      - name: Zip Windows
+        if: matrix.os == 'windows-latest'
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path ${{ matrix.zip_name }}
+          Copy-Item "${{ matrix.executable_path }}" -Destination "${{ matrix.zip_name }}\"
+          Copy-Item -Recurse "SNAUTOOBS" -Destination "${{ matrix.zip_name }}\"
+          Copy-Item "config.ini" -Destination "${{ matrix.zip_name }}\"
+          Compress-Archive -Path "${{ matrix.zip_name }}\*" -DestinationPath "${{ matrix.zip_name }}.zip"
+
+      - name: Zip Linux
+        if: matrix.os == 'ubuntu-latest'
+        shell: bash
+        run: |
+          mkdir -p ${{ matrix.zip_name }}
+          cp ${{ matrix.executable_path }} ${{ matrix.zip_name }}/
+          cp -r SNAUTOOBS/ ${{ matrix.zip_name }}/
+          cp config.ini ${{ matrix.zip_name }}/
+          zip -r ${{ matrix.zip_name }}.zip ${{ matrix.zip_name }}/
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.zip_name }}
+          path: ${{ matrix.zip_name }}.zip
+
+  release:
+    name: Create Release
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: ./artifacts
+          merge-multiple: true
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ github.run_number }}
+          name: Release v${{ github.run_number }}
+          draft: false
+          prerelease: false
+          files: |
+            ./artifacts/SNAUTO-Windows.zip
+            ./artifacts/SNAUTO-Linux.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

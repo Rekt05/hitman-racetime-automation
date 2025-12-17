@@ -1,0 +1,3 @@
+pyinstaller
+requests
+obs-websocket-py
