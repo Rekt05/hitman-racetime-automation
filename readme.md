@@ -1,5 +1,7 @@
 This app takes a racetime.gg link and automatically adds the player streams to an obs layout specifically made for hitman SN Races
 
+The OBS Scene Collection this entire app was based on was made by the awesome [ThatObserver](https://www.youtube.com/channel/UCY6kHCCKxcVRcMVf9PBtz6w)
+
 [Linux install video](https://youtu.be/cg9OBavoEqw)
 
 Windows video coming eventually when linux is confirmed to be working
