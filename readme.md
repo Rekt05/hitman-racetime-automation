@@ -15,7 +15,7 @@ If you have a preset you would like to add refer to the very bottom of the readm
 
 Usage Instructions/Notes:
 - Import the scene to obs with Scene Collection -> Import -> Browse -> SN_Race_Preset_x.json in the SNAUTOOBS folder, use the same folder when it asks you to locate the missing images.
-- For the OBS password go to Tools -> WebSocket Server Settings -> Show Connect Info -> Server Password.
+- For the OBS password go to Tools -> WebSocket Server Settings -> Show Connect Info -> Server Password. Make sure that Enable WebSocket server under Tools -> WebSocket Server Settings is also enabled. 
 - Paste in the racetime link or click the "Find Current Race" button.
 - Auto Fill Slots will scan the racetime lobby every 5 seconds and add new players that joined, turning it off will make it stop scanning/adding players.
 - Show Placement Images when ticked will automatically show the placement image related to them when they finish.
