@@ -37,12 +37,12 @@ jobs:
       - name: Build Windows
         if: matrix.os == 'windows-latest'
         run: |
-          pyinstaller --name "Hitman_Racetime_Automation" --onefile --windowed --add-data "config.ini;." Hitman_Racetime_Automation.py
+          pyinstaller --name "Hitman_Racetime_Automation" --onefile --windowed Hitman_Racetime_Automation.py
 
       - name: Build Linux
         if: matrix.os == 'ubuntu-latest'
         run: |
-          pyinstaller --name "Hitman_Racetime_Automation" --onefile --windowed --add-data "config.ini:." Hitman_Racetime_Automation.py
+          pyinstaller --name "Hitman_Racetime_Automation" --onefile --windowed Hitman_Racetime_Automation.py
 
       - name: Zip Windows
         if: matrix.os == 'windows-latest'
@@ -51,7 +51,6 @@ jobs:
           New-Item -ItemType Directory -Force -Path ${{ matrix.zip_name }}
           Copy-Item "${{ matrix.executable_path }}" -Destination "${{ matrix.zip_name }}\"
           Copy-Item -Recurse "SNAUTOOBS" -Destination "${{ matrix.zip_name }}\"
-          Copy-Item "config.ini" -Destination "${{ matrix.zip_name }}\"
           Compress-Archive -Path "${{ matrix.zip_name }}\*" -DestinationPath "${{ matrix.zip_name }}.zip"
 
       - name: Zip Linux
@@ -61,7 +60,6 @@ jobs:
           mkdir -p ${{ matrix.zip_name }}
           cp ${{ matrix.executable_path }} ${{ matrix.zip_name }}/
           cp -r SNAUTOOBS/ ${{ matrix.zip_name }}/
-          cp config.ini ${{ matrix.zip_name }}/
           zip -r ${{ matrix.zip_name }}.zip ${{ matrix.zip_name }}/
 
       - name: Upload Artifact
