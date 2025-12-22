@@ -354,7 +354,8 @@ class RacetimeAutomation:
             if not url:
                 time.sleep(1)
                 continue
-                
+            
+            if not url.startswith("https://"): url = "https://" + url
             if not url.endswith("/data"): url += "/data"
             try:
                 data = requests.get(url, timeout=4).json()
