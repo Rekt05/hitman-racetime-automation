@@ -91,7 +91,9 @@ class RacetimeAutomation:
         racesection.pack(fill="x", padx=10, pady=5)
 
         ttk.Label(racesection, text="Racetime URL:").grid(row=0, column=0, sticky="w")
-        ttk.Entry(racesection, textvariable=self.urlvar, width=40).grid(row=0, column=1, padx=5, columnspan=2, sticky="ew")
+        ttk.Entry(racesection, textvariable=self.urlvar, width=40).grid(row=0, column=1, padx=5, sticky="ew")
+
+        ttk.Button(racesection, text="Find Current Race", command=self.get_current).grid(row=0, column=2, padx=5)
         
         ttk.Checkbutton(racesection, text="Auto Fill Slots", variable=self.autofillvar).grid(row=1, column=0, sticky="w", pady=5)
         
@@ -122,6 +124,34 @@ class RacetimeAutomation:
         self.status_var = tk.StringVar(value="Enter an OBS password and click start")
         self.status_label = ttk.Label(root, textvariable=self.status_var, relief="sunken", style="TLabel")
         self.status_label.pack(side="bottom", fill="x")
+
+    def get_current(self):
+        try:
+            r = requests.get("https://racetime.gg/hitman-3/data", timeout=5) #change "hitman-3" to whatever game if needed
+            if r.status_code == 200:
+                data = r.json()
+                active = data.get('current_races', [])
+                openr = [race for race in active if race.get('status', {}).get('value') == 'open']
+                
+                #this gets the first open/active race, not a problem with the frequency of hitman races being only 1 every week, but should ideally be handled by user choice
+                if openr:
+                    target = openr[0].get('data_url')
+                    name = openr[0].get('url')
+                    roomurl = f"https://racetime.gg{target}"
+                    self.urlvar.set(roomurl)
+                    self.log(f"Race {name} was found.")
+                elif active:
+                    target = active[0].get('data_url')
+                    name = active[0].get('url')
+                    roomurl = f"https://racetime.gg{target}"
+                    self.urlvar.set(roomurl)
+                    self.log(f"No open races, active race {name} used instead.")
+                else:
+                    self.log("No active hitman-3 races found.")
+            else:
+                self.log("Racetime.gg did not respond.")
+        except Exception as e:
+            self.log(e)
 
     def save_config(self):
         if 'Settings' not in self.config:
