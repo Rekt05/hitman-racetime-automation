@@ -2,7 +2,7 @@ This app takes a racetime.gg link and automatically adds the player streams to a
 
 The OBS Scene Collection this entire app was based on was made by the awesome [ThatObserver](https://www.youtube.com/channel/UCY6kHCCKxcVRcMVf9PBtz6w)
 
-[Linux install video](https://youtu.be/cg9OBavoEqw) - slightly outdated in terms of presets and other small details, refer to basically all the text below for a more comprehensive overview
+[Linux install video](https://youtu.be/cg9OBavoEqw) - slightly outdated in terms of presets/link pasting and other small details, refer to basically all the text below for a more comprehensive overview
 
 Windows video coming eventually when linux is confirmed to be working
 
@@ -16,7 +16,7 @@ If you have a preset you would like to add refer to the very bottom of the readm
 Usage Instructions/Notes:
 - Import the scene to obs with Scene Collection -> Import -> Browse -> SN_Race_Preset_x.json in the SNAUTOOBS folder, use the same folder when it asks you to locate the missing images.
 - For the OBS password go to Tools -> WebSocket Server Settings -> Show Connect Info -> Server Password.
-- Paste in racetime link in full (including https).
+- Paste in the racetime link or click the "Find Current Race" button.
 - Auto Fill Slots will scan the racetime lobby every 5 seconds and add new players that joined, turning it off will make it stop scanning/adding players.
 - Show Placement Images when ticked will automatically show the placement image related to them when they finish.
 - Use the arrow buttons to move the players up/down the list and use the trash can button to remove them from the list, you can add them back using the + button in the Removed Players section.
@@ -29,8 +29,7 @@ Usage Instructions/Notes:
 Future features i have thought of (and will probably do):
 - Spotlight one player for the Stream (Zoom) Scene.
 - Automate the Leaderboard
-- remove cfg.ini from shipped app and auto generate if not exists
-- better racetime link parsing to avoid having to paste it including the https
+- Add update update checking to alert users of a new app version on startup
 
 if you have any ideas for features or if you have a preset you would like to add open a *pr or dm me on discord @Rekt05
 
