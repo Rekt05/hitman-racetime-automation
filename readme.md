@@ -2,7 +2,7 @@ This app takes a racetime.gg link and automatically adds the player streams to a
 
 The OBS Scene Collection this entire app was based on was made by the awesome [ThatObserver](https://www.youtube.com/channel/UCY6kHCCKxcVRcMVf9PBtz6w)
 
-[Linux install video](https://youtu.be/cg9OBavoEqw)
+[Linux install video](https://youtu.be/cg9OBavoEqw) - slightly outdated in terms of presets and other small details, refer to basically all the text below for a more comprehensive overview
 
 Windows video coming eventually when linux is confirmed to be working
 
@@ -26,9 +26,11 @@ Usage Instructions/Notes:
 - You can freely move and resize things like "Steamer Name X" and the stream itself and the program will still work as intended, to move the names click on the source in the appropriate folder, to move/resize the stream just click on it in the preview.
 - If you want to move the name to be on top of the video player, remember to drag it above the stream source in the folder.
 
-Future features i have thought of:
+Future features i have thought of (and will probably do):
 - Spotlight one player for the Stream (Zoom) Scene.
 - Automate the Leaderboard
+- remove cfg.ini from shipped app and auto generate if not exists
+- better racetime link parsing to avoid having to paste it including the https
 
 if you have any ideas for features or if you have a preset you would like to add open a *pr or dm me on discord @Rekt05
 
