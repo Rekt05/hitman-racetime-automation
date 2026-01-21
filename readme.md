@@ -17,7 +17,6 @@ Usage Instructions/Notes:
 - Import the scene to obs with Scene Collection -> Import -> Browse -> SN_Race_Preset_x.json in the SNAUTOOBS folder, use the same folder when it asks you to locate the missing images.
 - For the OBS password go to Tools -> WebSocket Server Settings -> Show Connect Info -> Server Password. Make sure that Enable WebSocket server under Tools -> WebSocket Server Settings is also enabled. 
 - Paste in the racetime link or click the "Find Current Race" button.
-- Auto Fill Slots will scan the racetime lobby every 5 seconds and add new players that joined, turning it off will make it stop scanning/adding players.
 - Show Placement Images when ticked will automatically show the placement image related to them when they finish.
 - Use the arrow buttons to move the players up/down the list and use the trash can button to remove them from the list, you can add them back using the + button in the Removed Players section.
 - Ensure that your mic and any other applicable audio sources are configured properly.
@@ -29,7 +28,6 @@ Usage Instructions/Notes:
 Future features i have thought of (and will probably do):
 - Spotlight one player for the Stream (Zoom) Scene.
 - Automate the Leaderboard
-- Add update update checking to alert users of a new app version on startup
 
 if you have any ideas for features or if you have a preset you would like to add open a *pr or dm me on discord @Rekt05
 

@@ -23,6 +23,11 @@ def get_external_path(filename):
         base_path = os.path.dirname(os.path.abspath(__file__))
     return os.path.join(base_path, filename)
 
+#version config
+version = "4"
+version_url = "https://raw.githubusercontent.com/Rekt05/hitman-racetime-automation/refs/heads/main/current_version.txt"
+releases_url = "https://github.com/Rekt05/hitman-racetime-automation/releases/latest"
+
 #config
 obshost = "localhost"
 obsport = 4455
@@ -57,7 +62,6 @@ class RacetimeAutomation:
         #gui vars
         self.resultstoggle = tk.BooleanVar(value=False)
         self.urlvar = tk.StringVar()
-        self.autofillvar = tk.BooleanVar(value=True)
         
         #password
         self.config = configparser.ConfigParser()
@@ -95,11 +99,9 @@ class RacetimeAutomation:
 
         ttk.Button(racesection, text="Find Current Race", command=self.get_current).grid(row=0, column=2, padx=5)
         
-        ttk.Checkbutton(racesection, text="Auto Fill Slots", variable=self.autofillvar).grid(row=1, column=0, sticky="w", pady=5)
-        
         ttk.Checkbutton(racesection, text="Show Placement Images", 
                         variable=self.resultstoggle, 
-                        command=self.manual_results_toggle).grid(row=1, column=1, columnspan=2, sticky="w", pady=5)
+                        command=self.manual_results_toggle).grid(row=1, column=0, sticky="w", pady=5)
 
         #player section
         playersection = ttk.Frame(root)
@@ -124,6 +126,46 @@ class RacetimeAutomation:
         self.status_var = tk.StringVar(value="Enter an OBS password and click start")
         self.status_label = ttk.Label(root, textvariable=self.status_var, relief="sunken", style="TLabel")
         self.status_label.pack(side="bottom", fill="x")
+
+        threading.Thread(target=self.check_for_updates, daemon=True).start()
+
+    def check_for_updates(self):
+        ignored = self.config.get("Settings", "IgnoreVersion", fallback="")
+        try:
+            r = requests.get(version_url, timeout=5)
+            if r.status_code == 200:
+                latest = r.text.strip()
+                if latest != version and latest != ignored:
+                    self.root.after(0, lambda: self.show_update_dialog(latest))
+        except:
+            pass
+
+    def show_update_dialog(self, latest_version):
+        update_win = tk.Toplevel(self.root)
+        update_win.title("Available Update")
+        update_win.geometry("350x120")
+        update_win.resizable(False, False)
+        update_win.attributes("-topmost", True)
+        
+        ttk.Label(update_win, text=f"A new update (v{latest_version}) is now available for download", padding=10).pack()
+        
+        btn_frame = ttk.Frame(update_win)
+        btn_frame.pack(pady=10)
+
+        def open_link():
+            import webbrowser
+            webbrowser.open(releases_url)
+            update_win.destroy()
+
+        def ignore_perm():
+            if 'Settings' not in self.config: self.config['Settings'] = {}
+            self.config['Settings']['IgnoreVersion'] = latest_version
+            self.save_config()
+            update_win.destroy()
+
+        ttk.Button(btn_frame, text="Go to Page", command=open_link).grid(row=0, column=0, padx=5)
+        ttk.Button(btn_frame, text="Ignore Once", command=update_win.destroy).grid(row=0, column=1, padx=5)
+        ttk.Button(btn_frame, text="Ignore Permanently", command=ignore_perm).grid(row=0, column=2, padx=5)
 
     def get_current(self):
         try:
@@ -373,19 +415,18 @@ class RacetimeAutomation:
             nameslower = {s['namevar'].get().lower() for s in self.slots if s['namevar'].get()}
             blacklistednameslower = set(self.blacklist.keys())
             
-            if self.autofillvar.get():
-                for entrant in entrants:
-                    pname = entrant['user']['name']
-                    pnamelower = pname.lower()
+            for entrant in entrants:
+                pname = entrant['user']['name']
+                pnamelower = pname.lower()
                     
-                    if pnamelower not in nameslower and pnamelower not in blacklistednameslower:
-                        for slot in self.slots:
-                            if not slot['namevar'].get():
-                                slot['namevar'].set(pname)
-                                self.update_obs(slot, entrant)
-                                self.manage_folder_visibility()
-                                nameslower.add(pnamelower) 
-                                break
+                if pnamelower not in nameslower and pnamelower not in blacklistednameslower:
+                    for slot in self.slots:
+                        if not slot['namevar'].get():
+                            slot['namevar'].set(pname)
+                            self.update_obs(slot, entrant)
+                            self.manage_folder_visibility()
+                            nameslower.add(pnamelower) 
+                            break
             
             self.manage_folder_visibility() 
 
