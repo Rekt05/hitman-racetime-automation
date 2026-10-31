@@ -32,7 +32,7 @@ The OBS scene collections are based on the original from [ThatObserver](https://
     - Name Height: Sets the height of player names (0-100), somewhere between 50 and 90 looks the best
     - Name Position: Sets the player name position in relation to the stream
     - Finished Timer: How long "Auto Removed Finished" before removing finished players (0-45s)
-    - Auto Remove Finished: Starts a timer with the above mentioned duration when a player clicks done or dnf on racetime, the other players on the screen stay where they are and the next player in line from a later scene replaces them
+    - Auto Remove Finished: Starts a timer with the above mentioned duration when a player clicks done or dnf on racetime, the other players on the screen stay where they are and the last player from a later scene replaces them
     - Auto Resize Streams: Resizes the streams and positions based on how many players are still on it
     - Reset All Positions: Resets the positions and sizes of streams and names to the original
     - Refresh All Streams: Reloads every stream

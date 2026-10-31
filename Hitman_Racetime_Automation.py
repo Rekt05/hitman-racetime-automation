@@ -45,10 +45,11 @@ def fill_hole_names(names, index, slots_per_scene):
     if not (0 <= index < len(names)):
         return names
     next_page = ((index // slots_per_scene) + 1) * slots_per_scene
-    donor = next((i for i in range(next_page, len(names)) if names[i]), None)
-    if donor is None:
+    later = [i for i in range(next_page, len(names)) if names[i]]
+    if not later:
         names[index] = ""
     else:
+        donor = later[-1]
         names[index] = names[donor]
         names[donor] = ""
     return names
