@@ -1,0 +1,73 @@
+name: Build
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - os: windows-latest
+            zip_name: HRA-Windows
+            executable_path: dist/Hitman_Racetime_Automation.exe
+          - os: ubuntu-latest
+            zip_name: HRA-Linux
+            executable_path: dist/Hitman_Racetime_Automation
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.13
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
+      - name: Install Linux Tk
+        if: matrix.os == 'ubuntu-latest'
+        run: sudo apt-get update && sudo apt-get install -y python3-tk
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Build Windows
+        if: matrix.os == 'windows-latest'
+        run: |
+          pyinstaller --name "Hitman_Racetime_Automation" --onefile --windowed Hitman_Racetime_Automation.py
+
+      - name: Build Linux
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          pyinstaller --name "Hitman_Racetime_Automation" --onefile --windowed Hitman_Racetime_Automation.py
+
+      - name: Zip Windows
+        if: matrix.os == 'windows-latest'
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path ${{ matrix.zip_name }}
+          Copy-Item "${{ matrix.executable_path }}" -Destination "${{ matrix.zip_name }}\"
+          Copy-Item -Recurse "SNR" -Destination "${{ matrix.zip_name }}\"
+          Copy-Item -Recurse "SNSASO" -Destination "${{ matrix.zip_name }}\"
+          Compress-Archive -Path "${{ matrix.zip_name }}\*" -DestinationPath "${{ matrix.zip_name }}.zip"
+
+      - name: Zip Linux
+        if: matrix.os == 'ubuntu-latest'
+        shell: bash
+        run: |
+          mkdir -p ${{ matrix.zip_name }}
+          cp ${{ matrix.executable_path }} ${{ matrix.zip_name }}/
+          cp -r SNR/ ${{ matrix.zip_name }}/
+          cp -r SNSASO/ ${{ matrix.zip_name }}/
+          zip -r ${{ matrix.zip_name }}.zip ${{ matrix.zip_name }}/
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.zip_name }}
+          path: ${{ matrix.zip_name }}.zip
